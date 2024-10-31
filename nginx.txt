@@ -1,0 +1,25 @@
+sudo apt update
+sudo apt install nginx -y
+sudo systemctl start nginx
+sudo systemctl enable nginx
+
+
+sudo nano /etc/nginx/sites-available/default
+
+server {
+    listen 80; # Port yang akan didengarkan
+    server_name 172.236.98.60; # Ganti dengan domain Anda
+
+    location / {
+        proxy_pass http://localhost:3000; # Ganti port ini sesuai dengan port aplikasi Express Anda
+        proxy_http_version 1.1;
+        proxy_set_header Upgrade $http_upgrade;
+        proxy_set_header Connection 'upgrade';
+        proxy_set_header Host $host;
+        proxy_cache_bypass $http_upgrade;
+    }
+}
+
+sudo ln -s /etc/nginx/sites-available/default /etc/nginx/sites-enabled/
+sudo nginx -t
+sudo systemctl restart nginx
